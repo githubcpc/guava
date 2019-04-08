@@ -51,7 +51,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Consumer;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 /**
@@ -148,7 +148,7 @@ public final class Sets {
                 Accumulator::toImmutableSet,
                 Collector.Characteristics.UNORDERED);
 
-    @MonotonicNonNullDecl private EnumSet<E> set;
+    @MonotonicNonNull private EnumSet<E> set;
 
     void add(E e) {
       if (set == null) {
@@ -181,7 +181,6 @@ public final class Sets {
    *
    * @since 21.0
    */
-  @Beta
   public static <E extends Enum<E>> Collector<E, ?, ImmutableSet<E>> toImmutableEnumSet() {
     return (Collector) Accumulator.TO_IMMUTABLE_ENUM_SET;
   }
@@ -868,7 +867,7 @@ public final class Sets {
 
       @Override
       public boolean isEmpty() {
-        return Collections.disjoint(set1, set2);
+        return Collections.disjoint(set2, set1);
       }
 
       @Override
@@ -1539,9 +1538,9 @@ public final class Sets {
     final ImmutableMap<E, Integer> inputSet;
 
     PowerSet(Set<E> input) {
-      this.inputSet = Maps.indexMap(input);
       checkArgument(
-          inputSet.size() <= 30, "Too many elements to create power set: %s > 30", inputSet.size());
+          input.size() <= 30, "Too many elements to create power set: %s > 30", input.size());
+      this.inputSet = Maps.indexMap(input);
     }
 
     @Override
@@ -1837,7 +1836,7 @@ public final class Sets {
       throw new UnsupportedOperationException();
     }
 
-    @MonotonicNonNullDecl private transient UnmodifiableNavigableSet<E> descendingSet;
+    private transient @MonotonicNonNull UnmodifiableNavigableSet<E> descendingSet;
 
     @Override
     public NavigableSet<E> descendingSet() {

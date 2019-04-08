@@ -46,6 +46,12 @@ import com.google.common.base.Optional;
  *
  * @author James Sexton
  * @author Joshua O'Madadhain
+ * @param <N> The most general node type this builder will support. This is normally {@code Object}
+ *     unless it is constrained by using a method like {@link #nodeOrder}, or the builder is
+ *     constructed based on an existing {@code Network} using {@link #from(Network)}.
+ * @param <N> The most general edge type this builder will support. This is normally {@code Object}
+ *     unless it is constrained by using a method like {@link #edgeOrder}, or the builder is
+ *     constructed based on an existing {@code Network} using {@link #from(Network)}.
  * @since 20.0
  */
 @Beta
@@ -83,6 +89,18 @@ public final class NetworkBuilder<N, E> extends AbstractGraphBuilder<N> {
         .allowsSelfLoops(network.allowsSelfLoops())
         .nodeOrder(network.nodeOrder())
         .edgeOrder(network.edgeOrder());
+  }
+
+  /**
+   * Returns an {@link ImmutableNetwork#Builder} with the properties of this {@link NetworkBuilder}.
+   *
+   * <p>The returned builder can be used for populating an {@link ImmutableNetwork}.
+   *
+   * @since NEXT
+   */
+  public <N1 extends N, E1 extends E> ImmutableNetwork.Builder<N1, E1> immutable() {
+    NetworkBuilder<N1, E1> castBuilder = cast();
+    return new ImmutableNetwork.Builder<>(castBuilder);
   }
 
   /**

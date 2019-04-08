@@ -44,6 +44,12 @@ import com.google.common.base.Optional;
  *
  * @author James Sexton
  * @author Joshua O'Madadhain
+ * @param <N> The most general node type this builder will support. This is normally {@code Object}
+ *     unless it is constrained by using a method like {@link #nodeOrder}, or the builder is
+ *     constructed based on an existing {@code ValueGraph} using {@link #from(ValueGraph)}.
+ * @param <V> The most general value type this builder will support. This is normally {@code Object}
+ *     unless the builder is constructed based on an existing {@code Graph} using {@link
+ *     #from(ValueGraph)}.
  * @since 20.0
  */
 @Beta
@@ -76,6 +82,19 @@ public final class ValueGraphBuilder<N, V> extends AbstractGraphBuilder<N> {
     return new ValueGraphBuilder<N, V>(graph.isDirected())
         .allowsSelfLoops(graph.allowsSelfLoops())
         .nodeOrder(graph.nodeOrder());
+  }
+
+  /**
+   * Returns an {@link ImmutableValueGraph#Builder} with the properties of this {@link
+   * ValueGraphBuilder}.
+   *
+   * <p>The returned builder can be used for populating an {@link ImmutableValueGraph}.
+   *
+   * @since NEXT
+   */
+  public <N1 extends N, V1 extends V> ImmutableValueGraph.Builder<N1, V1> immutable() {
+    ValueGraphBuilder<N1, V1> castBuilder = cast();
+    return new ImmutableValueGraph.Builder<>(castBuilder);
   }
 
   /**

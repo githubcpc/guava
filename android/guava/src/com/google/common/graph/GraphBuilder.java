@@ -43,6 +43,9 @@ import com.google.common.base.Optional;
  *
  * @author James Sexton
  * @author Joshua O'Madadhain
+ * @param <N> The most general node type this builder will support. This is normally {@code Object}
+ *     unless it is constrained by using a method like {@link #nodeOrder}, or the builder is
+ *     constructed based on an existing {@code Graph} using {@link #from(Graph)}.
  * @since 20.0
  */
 @Beta
@@ -74,6 +77,18 @@ public final class GraphBuilder<N> extends AbstractGraphBuilder<N> {
     return new GraphBuilder<N>(graph.isDirected())
         .allowsSelfLoops(graph.allowsSelfLoops())
         .nodeOrder(graph.nodeOrder());
+  }
+
+  /**
+   * Returns an {@link ImmutableGraph#Builder} with the properties of this {@link GraphBuilder}.
+   *
+   * <p>The returned builder can be used for populating an {@link ImmutableGraph}.
+   *
+   * @since NEXT
+   */
+  public <N1 extends N> ImmutableGraph.Builder<N1> immutable() {
+    GraphBuilder<N1> castBuilder = cast();
+    return new ImmutableGraph.Builder<>(castBuilder);
   }
 
   /**

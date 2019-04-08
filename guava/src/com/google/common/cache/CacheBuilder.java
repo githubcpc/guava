@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 /**
  * A builder of {@link LoadingCache} and {@link Cache} instances having any combination of the
@@ -157,7 +157,11 @@ import org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl;
 public final class CacheBuilder<K, V> {
   private static final int DEFAULT_INITIAL_CAPACITY = 16;
   private static final int DEFAULT_CONCURRENCY_LEVEL = 4;
+
+  @SuppressWarnings("GoodTime") // should be a java.time.Duration
   private static final int DEFAULT_EXPIRATION_NANOS = 0;
+
+  @SuppressWarnings("GoodTime") // should be a java.time.Duration
   private static final int DEFAULT_REFRESH_NANOS = 0;
 
   static final Supplier<? extends StatsCounter> NULL_STATS_COUNTER =
@@ -169,9 +173,11 @@ public final class CacheBuilder<K, V> {
             @Override
             public void recordMisses(int count) {}
 
+            @SuppressWarnings("GoodTime") // b/122668874
             @Override
             public void recordLoadSuccess(long loadTime) {}
 
+            @SuppressWarnings("GoodTime") // b/122668874
             @Override
             public void recordLoadException(long loadTime) {}
 
@@ -227,20 +233,25 @@ public final class CacheBuilder<K, V> {
   int concurrencyLevel = UNSET_INT;
   long maximumSize = UNSET_INT;
   long maximumWeight = UNSET_INT;
-  @MonotonicNonNullDecl Weigher<? super K, ? super V> weigher;
+  @MonotonicNonNull Weigher<? super K, ? super V> weigher;
 
-  @MonotonicNonNullDecl Strength keyStrength;
-  @MonotonicNonNullDecl Strength valueStrength;
+  @MonotonicNonNull Strength keyStrength;
+  @MonotonicNonNull Strength valueStrength;
 
+  @SuppressWarnings("GoodTime") // should be a java.time.Duration
   long expireAfterWriteNanos = UNSET_INT;
+
+  @SuppressWarnings("GoodTime") // should be a java.time.Duration
   long expireAfterAccessNanos = UNSET_INT;
+
+  @SuppressWarnings("GoodTime") // should be a java.time.Duration
   long refreshNanos = UNSET_INT;
 
-  @MonotonicNonNullDecl Equivalence<Object> keyEquivalence;
-  @MonotonicNonNullDecl Equivalence<Object> valueEquivalence;
+  @MonotonicNonNull Equivalence<Object> keyEquivalence;
+  @MonotonicNonNull Equivalence<Object> valueEquivalence;
 
-  @MonotonicNonNullDecl RemovalListener<? super K, ? super V> removalListener;
-  @MonotonicNonNullDecl Ticker ticker;
+  @MonotonicNonNull RemovalListener<? super K, ? super V> removalListener;
+  @MonotonicNonNull Ticker ticker;
 
   Supplier<? extends StatsCounter> statsCounterSupplier = NULL_STATS_COUNTER;
 
@@ -644,6 +655,7 @@ public final class CacheBuilder<K, V> {
    */
   @J2ObjCIncompatible
   @GwtIncompatible // java.time.Duration
+  @SuppressWarnings("GoodTime") // java.time.Duration decomposition
   public CacheBuilder<K, V> expireAfterWrite(java.time.Duration duration) {
     return expireAfterWrite(duration.toNanos(), TimeUnit.NANOSECONDS);
   }
@@ -670,6 +682,7 @@ public final class CacheBuilder<K, V> {
    * @throws IllegalArgumentException if {@code duration} is negative
    * @throws IllegalStateException if the time to live or time to idle was already set
    */
+  @SuppressWarnings("GoodTime") // should accept a java.time.Duration
   public CacheBuilder<K, V> expireAfterWrite(long duration, TimeUnit unit) {
     checkState(
         expireAfterWriteNanos == UNSET_INT,
@@ -709,6 +722,7 @@ public final class CacheBuilder<K, V> {
    */
   @J2ObjCIncompatible
   @GwtIncompatible // java.time.Duration
+  @SuppressWarnings("GoodTime") // java.time.Duration decomposition
   public CacheBuilder<K, V> expireAfterAccess(java.time.Duration duration) {
     return expireAfterAccess(duration.toNanos(), TimeUnit.NANOSECONDS);
   }
@@ -738,6 +752,7 @@ public final class CacheBuilder<K, V> {
    * @throws IllegalArgumentException if {@code duration} is negative
    * @throws IllegalStateException if the time to idle or time to live was already set
    */
+  @SuppressWarnings("GoodTime") // should accept a java.time.Duration
   public CacheBuilder<K, V> expireAfterAccess(long duration, TimeUnit unit) {
     checkState(
         expireAfterAccessNanos == UNSET_INT,
@@ -782,6 +797,7 @@ public final class CacheBuilder<K, V> {
    */
   @J2ObjCIncompatible
   @GwtIncompatible // java.time.Duration
+  @SuppressWarnings("GoodTime") // java.time.Duration decomposition
   public CacheBuilder<K, V> refreshAfterWrite(java.time.Duration duration) {
     return refreshAfterWrite(duration.toNanos(), TimeUnit.NANOSECONDS);
   }
@@ -816,6 +832,7 @@ public final class CacheBuilder<K, V> {
    * @since 11.0
    */
   @GwtIncompatible // To be supported (synchronously).
+  @SuppressWarnings("GoodTime") // should accept a java.time.Duration
   public CacheBuilder<K, V> refreshAfterWrite(long duration, TimeUnit unit) {
     checkNotNull(unit);
     checkState(refreshNanos == UNSET_INT, "refresh was already set to %s ns", refreshNanos);
